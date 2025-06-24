@@ -7,11 +7,13 @@ local colors = {
   violet = '#d183e8',
   grey = '#303030',
   trueblack = '#000000',
+  green = '#c3e88d',
+  orange = '#ffb86c',
 }
 
 local bubbles_theme = {
   normal = {
-    a = { fg = colors.black, bg = colors.violet },
+    a = { fg = colors.black, bg = colors.green },
     b = { fg = colors.white, bg = colors.trueblack },
     c = { fg = colors.white, bg = colors.trueblack },
   },
@@ -40,17 +42,37 @@ return {
       sections = {
         lualine_a = { { 'mode', separator = { left = '', right = '' }, right_padding = 2 } },
         lualine_b = { 'filename', 'branch' },
-        lualine_c = { 'diff', 'diagnostics' },
-        lualine_x = {
+        lualine_c = {
           {
             'diff',
-            -- Is it me or the symbol for modified us really weird
-            symbols = { added = ' ', modified = '󰝤 ', removed = ' ' },
+            colored = true, -- Displays a colored diff status if set to true
             diff_color = {
               added = { fg = colors.green },
               modified = { fg = colors.orange },
               removed = { fg = colors.red },
             },
+            symbols = { added = ' ', modified = '󰝤 ', removed = ' ' }, -- Changes the symbols used by the diff.
+            -- source = nil, -- A function that works as a data source for diff.
+            -- It must return a table as such:
+            --   { added = add_count, modified = modified_count, removed = removed_count }
+            -- or nil on failure. count <= 0 won't be displayed.
+          },
+          'diagnostics',
+        },
+        lualine_x = {
+          {
+            'lsp_status',
+            icon = '', -- f013
+            symbols = {
+              -- Standard unicode symbols to cycle through for LSP progress:
+              spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' },
+              -- Standard unicode symbol for when LSP is done:
+              done = '✓',
+              -- Delimiter inserted between LSP names:
+              separator = ' ',
+            },
+            -- List of LSP names to ignore (e.g., `null-ls`):
+            ignore_lsp = {},
           },
         },
         lualine_y = { 'filetype', 'progress' },
