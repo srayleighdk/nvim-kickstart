@@ -5,9 +5,9 @@ return {
     require('onedark').setup {
       style = 'darker',
       transparent = true,
-      lualine = {
-        transparent = true,
-      },
+      -- lualine = {
+      --   transparent = true,
+      -- },
       code_style = {
         comments = 'italic',
         keywords = 'italic,bold',

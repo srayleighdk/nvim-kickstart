@@ -27,10 +27,15 @@ return {
       'saghen/blink.cmp',
     },
     config = function()
-      local blinkcapabilities = require('blink.cmp').get_lsp_capabilities()
+      -- local blinkcapabilities = require('blink.cmp').get_lsp_capabilities()
       local lspcapabilities = vim.lsp.protocol.make_client_capabilities()
+      local cmpcapabilities = require('cmp_nvim_lsp').default_capabilities()
 
-      local capabilities = vim.tbl_deep_extend('force', {}, blinkcapabilities, lspcapabilities)
+      local capabilities = vim.tbl_deep_extend('force', {}, lspcapabilities, cmpcapabilities)
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
       require('lspconfig').lua_ls.setup {
         capabilities = capabilities,
         settings = {
@@ -44,6 +49,53 @@ return {
           },
         },
       }
+      require('lspconfig').marksman.setup {
+        capabilities = capabilities,
+      }
+
+      require('lspconfig').pyright.setup {
+        capabilities = capabilities,
+      }
+
+      -- require('lspconfig').rust_analyzer.setup {
+      --   settings = {
+      --     ['rust-analyzer'] = {
+      --       inlayHints = {
+      --         bindingModeHints = {
+      --           enable = false,
+      --         },
+      --         chainingHints = {
+      --           enable = true,
+      --         },
+      --         closingBraceHints = {
+      --           enable = true,
+      --           minLines = 25,
+      --         },
+      --         closureReturnTypeHints = {
+      --           enable = 'never',
+      --         },
+      --         lifetimeElisionHints = {
+      --           enable = 'never',
+      --           useParameterNames = false,
+      --         },
+      --         maxLength = 25,
+      --         parameterHints = {
+      --           enable = true,
+      --         },
+      --         reborrowHints = {
+      --           enable = 'never',
+      --         },
+      --         renderColons = true,
+      --         typeHints = {
+      --           enable = true,
+      --           hideClosureInitialization = false,
+      --           hideNamedConstructor = false,
+      --         },
+      --       },
+      --     },
+      --   },
+      -- }
+
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.

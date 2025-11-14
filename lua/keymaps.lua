@@ -78,4 +78,48 @@ vim.keymap.set('n', '<C-s>', ':w<CR>', { desc = 'Save file' })
 vim.keymap.set('n', '_', ':split<CR>', { desc = 'Split horizontal' })
 vim.keymap.set('n', '-', ':vsplit<CR>', { desc = 'Split vertical' })
 
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = 'Cargo.toml',
+  callback = function()
+    local crates = require 'crates'
+
+    vim.keymap.del('n', '<leader>cf')
+
+    vim.keymap.set('n', '<leader>ct', crates.toggle, { silent = true, desc = 'Toggle Crates.nvim' })
+    -- vim.keymap.set("n", "<leader>cr", crates.reload, opts)
+
+    vim.keymap.set('n', '<leader>cv', crates.show_versions_popup,
+      { silent = true, desc = 'Show Crates.nvim versions popup' })
+    vim.keymap.set('n', '<leader>cf', crates.show_features_popup, { silent = true, desc = '[C]rates [F]eatures popup' })
+    vim.keymap.set('n', '<leader>cd', crates.show_dependencies_popup,
+      { silent = true, desc = '[C]rates [D]ependencies popup' })
+
+    vim.keymap.set('n', '<leader>cu', crates.update_crate, { silent = true, desc = 'Update Crate' })
+    vim.keymap.set('v', '<leader>cu', crates.update_crates, { silent = true, desc = 'Update Crates' })
+    -- vim.keymap.set("n", "<leader>ca", crates.update_all_crates, opts)
+    vim.keymap.set('n', '<leader>cU', crates.upgrade_crate, { silent = true, desc = 'Upgrade Crate' })
+    vim.keymap.set('v', '<leader>cU', crates.upgrade_crates, { silent = true, desc = 'Upgrade Crates' })
+    vim.keymap.set('n', '<leader>cA', crates.upgrade_all_crates, { silent = true, desc = 'Upgrade All Crates' })
+
+    vim.keymap.set('n', '<leader>cx', crates.expand_plain_crate_to_inline_table,
+      { silent = true, desc = 'Expand plain Crate to inline table' })
+    vim.keymap.set('n', '<leader>cX', crates.extract_crate_into_table,
+      { silent = true, desc = 'Extract Crate into table' })
+
+    vim.keymap.set('n', '<leader>cH', crates.open_homepage, { silent = true, desc = 'Open Crates.nvim homepage' })
+    vim.keymap.set('n', '<leader>cR', crates.open_repository, { silent = true, desc = 'Open Crates.nvim repository' })
+    vim.keymap.set('n', '<leader>cD', crates.open_documentation,
+      { silent = true, desc = 'Open Crates.nvim documentation' })
+    vim.keymap.set('n', '<leader>cC', crates.open_crates_io, { silent = true, desc = 'Open Crates.io homepage' })
+    vim.keymap.set('n', '<leader>cL', crates.open_lib_rs, { silent = true, desc = 'Open Lib.rs homepage' })
+  end,
+})
+
+-- Obsidian
+vim.keymap.set("n", "<leader>on", ":ObsidianNew<CR>", { desc = "New note" })
+vim.keymap.set("n", "<leader>os", ":ObsidianSearch<CR>", { desc = "Search notes" })
+vim.keymap.set("n", "<leader>of", ":ObsidianFollowLink<CR>", { desc = "Follow link" })
+vim.keymap.set("n", "<leader>ot", ":ObsidianTOC<CR>", { desc = "Table of contents" })
+vim.keymap.set("n", "<leader>op", ":ObsidianPasteImg<CR>", { desc = "Paste image" })
+
 -- vim: ts=2 sts=2 sw=2 et

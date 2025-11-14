@@ -9,11 +9,13 @@ local colors = {
   trueblack = '#000000',
   green = '#c3e88d',
   orange = '#ffb86c',
+  cayan = '#22d3ee',
+  sky = '#0ea5e9',
 }
 
 local bubbles_theme = {
   normal = {
-    a = { fg = colors.black, bg = colors.green },
+    a = { fg = colors.black, bg = colors.sky },
     b = { fg = colors.white, bg = colors.trueblack },
     c = { fg = colors.white, bg = colors.trueblack },
   },
