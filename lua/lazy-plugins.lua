@@ -33,8 +33,6 @@ require('lazy').setup({
 
   require 'kickstart.plugins.conform',
 
-  require 'kickstart.plugins.blink-cmp',
-
   require 'kickstart.plugins.onedark',
 
   require 'kickstart.plugins.todo-comments',

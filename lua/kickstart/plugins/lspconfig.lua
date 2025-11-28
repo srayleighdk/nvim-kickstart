@@ -36,26 +36,29 @@ return {
         dynamicRegistration = false,
         lineFoldingOnly = true,
       }
-      require('lspconfig').lua_ls.setup {
+      vim.lsp.config('lua_ls', {
         capabilities = capabilities,
         settings = {
           Lua = {
             completion = {
               callSnippet = 'Replace',
             },
+            codeLens = {
+              enable = true
+            },
             hint = {
               enable = true, -- Enable inlay hints
             },
           },
         },
-      }
-      require('lspconfig').marksman.setup {
+      })
+      vim.lsp.config('marksman', {
         capabilities = capabilities,
-      }
+      })
 
-      require('lspconfig').pyright.setup {
+      vim.lsp.config('pyright', {
         capabilities = capabilities,
-      }
+      })
 
       -- require('lspconfig').rust_analyzer.setup {
       --   settings = {
@@ -235,7 +238,6 @@ return {
           end
         end,
       })
-
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
