@@ -36,6 +36,9 @@ return {
         -- Conform can also run multiple formatters sequentially
         python = { "ruff", "black" },
         markdown = { "markdownlint" },
+        javascript = { "biome" },
+        typescript = { "biome" },
+        typescriptreact = { "biome" }
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
