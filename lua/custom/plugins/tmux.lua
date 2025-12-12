@@ -3,7 +3,7 @@ return {
 	config = function()
 		require('tmux').setup {
 			copy_sync = {
-				enable = false,
+				enable = true,
 			}
 		}
 	end,

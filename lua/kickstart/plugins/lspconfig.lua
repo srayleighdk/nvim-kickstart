@@ -29,9 +29,10 @@ return {
     config = function()
       -- local blinkcapabilities = require('blink.cmp').get_lsp_capabilities()
       local lspcapabilities = vim.lsp.protocol.make_client_capabilities()
-      local cmpcapabilities = require('cmp_nvim_lsp').default_capabilities()
+      -- local cmpcapabilities = require('cmp_nvim_lsp').default_capabilities()
 
-      local capabilities = vim.tbl_deep_extend('force', {}, lspcapabilities, cmpcapabilities)
+      -- local capabilities = vim.tbl_deep_extend('force', {}, lspcapabilities, cmpcapabilities)
+      local capabilities = vim.tbl_deep_extend('force', {}, lspcapabilities)
       capabilities.textDocument.foldingRange = {
         dynamicRegistration = false,
         lineFoldingOnly = true,
@@ -156,7 +157,7 @@ return {
           --  Useful when your language has ways of declaring types without an actual implementation.
           map('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
-          map('<leader>e', vim.diagnostic.open_float, '[E]rrors')
+          -- map('<leader>e', vim.diagnostic.open_float, '[E]rrors')
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.

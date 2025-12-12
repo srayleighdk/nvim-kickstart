@@ -31,15 +31,21 @@ return {
 			-- depend on plugins like `nvim-notify` instead.
 			notification_style = 'plugin',
 		},
-		default_run_args = {
-			flutter = '--debug --host-vmservice-port=8182 --dds-port=8181 --enable-vm-service --disable-service-auth-codes',
-		},
 		widget_guides = {
 			enabled = true,
 		},
+		dev_log = {
+			enabled = true,
+			filter = nil, -- optional callback to filter the log
+			-- takes a log_line as string argument; returns a boolean or nil;
+			-- the log_line is only added to the output if the function returns true
+			notify_errors = false, -- if there is an error whilst running then notify the user
+			open_cmd = "15split", -- command to use to open the log buffer
+			focus_on_open = false, -- focus on the newly opened log window
+		},
 		lsp = {
 			color = { -- show the derived colours for dart variables
-				enabled = true, -- whether or not to highlight color variables at all, only supported on flutter >= 2.10
+				enabled = false, -- whether or not to highlight color variables at all, only supported on flutter >= 2.10
 				background = false, -- highlight the background
 				background_color = nil, -- required, when background is transparent (i.e. background_color = { r = 19, g = 17, b = 24},)
 				foreground = false, -- highlight the foreground
@@ -60,10 +66,11 @@ return {
 				buf_set_keymap('n', 'K', vim.lsp.buf.hover, 'LSP: Show hover documentation')
 				buf_set_keymap('n', '<leader>rn', vim.lsp.buf.rename, 'LSP: Rename symbol')
 				buf_set_keymap('n', '<leader>ca', vim.lsp.buf.code_action, 'LSP: Code action')
+				buf_set_keymap('n', lhs, rhs, desc)
 				-- buf_set_keymap('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, 'LSP: Format buffer')
 
 				-- Diagnostics keybindings
-				buf_set_keymap('n', '<leader>e', vim.diagnostic.open_float, 'LSP: Show line diagnostics')
+				-- buf_set_keymap('n', '<leader>e', vim.diagnostic.open_float, 'LSP: Show line diagnostics')
 				-- buf_set_keymap('n', '[d', vim.diagnostic.goto_prev, 'LSP: Go to previous diagnostic')
 				-- buf_set_keymap('n', ']d', vim.diagnostic.goto_next, 'LSP: Go to next diagnostic')
 				-- buf_set_keymap('n', '<leader>q', vim.diagnostic.setloclist, 'LSP: Add diagnostics to location list')
