@@ -1,0 +1,30 @@
+{
+	"Riverpod: StreamNotifier": {
+		"scope": "dart",
+		"prefix": "streamNotifier",
+		"description": "Creates a StreamNotifier",
+		"body": [
+			"class $1Notifier extends StreamNotifier<$2> {",
+			"\t@override",
+			"\tStream<$2> build() {",
+			"\t\t$3",
+			"\t}",
+			"}"
+		]
+	},
+	"Riverpod: Family StreamNotifier": {
+		"scope": "dart",
+		"prefix": "streamNotifierFamily",
+		"description": "Creates a parametrized StreamNotifier",
+		"body": [
+			"class $1Notifier extends StreamNotifier<$2> {",
+			"\t$1Notifier(this.$4);",
+			"\tfinal $3 $4;",
+			"\t@override",
+			"\tStream<$2> build() {",
+			"\t\t$5",
+			"\t}",
+			"}"
+		]
+	}
+}

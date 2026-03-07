@@ -1,0 +1,12 @@
+{
+    "Riverpod (legacy): Change Notifier": {
+        "scope": "dart",
+        "prefix": "changeNotifier",
+        "description": "Creates a ChangeNotifier",
+        "body": [
+            "class $1Notifier extends ChangeNotifier {",
+            "\t$2",
+            "}"
+        ]
+    }
+}

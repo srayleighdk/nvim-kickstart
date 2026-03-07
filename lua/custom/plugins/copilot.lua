@@ -1,34 +1,6 @@
--- return
--- {
--- 	"supermaven-inc/supermaven-nvim",
--- 	config = function()
--- 		require("supermaven-nvim").setup({
--- 			disable_keymaps = true
--- 		})
--- 	end,
--- }
--- add this to the file where you setup your other plugins:
--- return {
--- 	"monkoose/neocodeium",
--- 	event = "VeryLazy",
--- 	config = function()
--- 		local neocodeium = require("neocodeium")
--- 		neocodeium.setup()
--- 		vim.keymap.set("i", "<A-f>", neocodeium.accept)
--- 	end,
--- }
---
--- return { "zbirenbaum/copilot.lua",
--- 	config = function ()
--- 		requires = {
---     "copilotlsp-nvim/copilot-lsp", -- (optional) for NES functionality
---   },
---
--- 	end
---   }
---
 return {
 	"zbirenbaum/copilot.lua",
+	event = "BufReadPost",
 	dependencies = {
 		{
 			"copilotlsp-nvim/copilot-lsp", -- (optional) for NES functionality
@@ -57,7 +29,7 @@ return {
 		},
 	},
 	cmd = "Copilot",
-	event = "InsertEnter",
+	-- event = "InsertEnter",
 	config = function()
 		require("copilot").setup({
 			suggestion = {
@@ -67,6 +39,38 @@ return {
 				}
 			},
 			panel = { enabled = false },
+			filetypes = {
+				["grug-far"] = false,
+				["grug-far-history"] = false,
+				["grug-far-help"] = false,
+			}
 		})
 	end,
 }
+
+
+-- return {
+-- 	"zbirenbaum/copilot.lua",
+-- 	cmd = "Copilot",
+-- 	event = "BufReadPost",
+-- 	config = function()
+-- 		require("copilot").setup({
+-- 			suggestion = {
+-- 				enabled = not vim.g.ai_cmp,
+-- 				auto_trigger = true,
+-- 				hide_during_completion = vim.g.ai_cmp,
+-- 				keymap = {
+-- 					accept = false, -- handled by nvim-cmp / blink.cmp
+-- 					next = "<M-]>",
+-- 					prev = "<M-[>",
+-- 				},
+-- 			},
+-- 			panel = { enabled = false },
+-- 			filetypes = {
+-- 				["grug-far"] = false,
+-- 				["grug-far-history"] = false,
+-- 				["grug-far-help"] = false,
+-- 			}
+-- 		})
+-- 	end,
+-- }

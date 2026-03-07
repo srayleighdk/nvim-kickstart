@@ -252,18 +252,19 @@ return {
 		"fang2hou/blink-copilot",
 		"onsails/lspkind-nvim",
 		"joelazar/blink-calc",
-		{
-			'L3MON4D3/LuaSnip',
-			dependencies = {
-				"rafamadriz/friendly-snippets"
-			},
-			version = '2.*',
-			build = 'make install_jsregexp',
-			opts = {},
-			config = function()
-				require("luasnip.loaders.from_vscode").lazy_load()
-			end,
-		},
+		'rafamadriz/friendly-snippets',
+		-- {
+		-- 	'L3MON4D3/LuaSnip',
+		-- 	dependencies = {
+		-- 		"rafamadriz/friendly-snippets"
+		-- 	},
+		-- 	version = '2.*',
+		-- 	build = 'make install_jsregexp',
+		-- 	opts = {},
+		-- 	config = function()
+		-- 		require("luasnip.loaders.from_vscode").lazy_load()
+		-- 	end,
+		-- },
 		{
 			'Kaiser-Yang/blink-cmp-dictionary',
 			dependencies = { 'nvim-lua/plenary.nvim' }
@@ -274,19 +275,41 @@ return {
 			nerd_font_variant = 'normal'
 		},
 		completion = {
+			list = {
+				selection = {
+					preselect = false,
+				},
+				auto_insert = true,
+			},
 			documentation = {
 				auto_show = true,
 				border = 'single',
 			}
 		},
 		signature = { enabled = true },
+		-- snippets = {
+		-- 	preset = 'luasnip'
+		-- },
 		snippets = {
-			preset = 'luasnip'
+			-- Function to use when expanding LSP provided snippets
+			expand = function(snippet) vim.snippet.expand(snippet) end,
+			-- Function to use when checking if a snippet is active
+			active = function(filter) return vim.snippet.active(filter) end,
+			-- Function to use when jumping between tab stops in a snippet, where direction can be negative or positive
+			jump = function(direction) vim.snippet.jump(direction) end,
 		},
 
 		sources = {
 			default = { "lsp", "path", "buffer", "snippets", "copilot", "calc", "dictionary" },
 			providers = {
+				snippets = {
+					opts = {
+						friendly_snippets = true,
+						extended_filetypes = {
+							dart = { 'flutter' }
+						}
+					}
+				},
 				copilot = {
 					name = "copilot",
 					module = "blink-copilot",
@@ -311,13 +334,50 @@ return {
 		},
 		keymap = {
 			preset = "enter",
-			['<Tab>'] = { 'snippet_forward', 'select_next', 'fallback' },
+			['<Tab>'] = {
+				'snippet_forward', 'select_next', 'fallback' },
 			['<S-Tab>'] = { 'snippet_backward', 'select_prev', 'fallback' },
 
 		},
 		cmdline = {
-			keymap = { preset = 'inherit' },
-			completion = { menu = { auto_show = true } },
+			enabled = true,
+			-- use 'inherit' to inherit mappings from top level `keymap` config
+			keymap = { preset = 'cmdline' },
+			sources = { 'buffer', 'cmdline' },
+
+			-- OR explicitly configure per cmd type
+			-- This ends up being equivalent to above since the sources disable themselves automatically
+			-- when not available. You may override their `enabled` functions via
+			-- `sources.providers.cmdline.override.enabled = function() return your_logic end`
+
+			-- sources = function()
+			--   local type = vim.fn.getcmdtype()
+			--   -- Search forward and backward
+			--   if type == '/' or type == '?' then return { 'buffer' } end
+			--   -- Commands
+			--   if type == ':' or type == '@' then return { 'cmdline', 'buffer' } end
+			--   return {}
+			-- end,
+
+			completion = {
+				trigger = {
+					show_on_blocked_trigger_characters = {},
+					show_on_x_blocked_trigger_characters = {},
+				},
+				list = {
+					selection = {
+						-- When `true`, will automatically select the first item in the completion list
+						preselect = false,
+						-- When `true`, inserts the completion item automatically when selecting it
+						auto_insert = true,
+					},
+				},
+				-- Whether to automatically show the window when new completion items are available
+				-- Default is false for cmdline, true for cmdwin (command-line window)
+				menu = { auto_show = function(ctx, _) return ctx.mode == 'cmdwin' end },
+				-- Displays a preview of the selected item on the current line
+				ghost_text = { enabled = true },
+			}
 		},
 		fuzzy = { implementation = "prefer_rust_with_warning" }
 	},

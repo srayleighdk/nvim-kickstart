@@ -1,8 +1,10 @@
 return {
-	"epwalsh/obsidian.nvim",
+	"obsidian-nvim/obsidian.nvim",
 	version = "*", -- recommended, use latest release instead of latest commit
 	-- lazy = true,
 	ft = "markdown",
+	---@module 'obsidian'
+	---@type obsidian.config
 	-- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
 	-- event = {
 	--   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
@@ -18,10 +20,15 @@ return {
 		-- see below for full list of optional dependencies 👇
 	},
 	opts = {
+		legacy_commands = false,
 		workspaces = {
 			{
 				name = "Personal",
 				path = "~/Documents/Obsidian/Personal",
+			},
+			{
+				name = "Work",
+				path = "~/Documents/Obsidian/Work",
 			},
 		},
 		notes_subdir = "00-Inbox",
@@ -37,7 +44,7 @@ return {
 			-- Optional, if you want to automatically insert a template from your template directory like 'daily.md'
 			template = nil
 		},
-		new_notes_location = "notes_subdir",
+		new_notes_location = "current_dir",
 		note_id_func = function(title)
 			-- Create note IDs in the format yyyy-mm-dd-title
 			-- e.g., '2025-07-07-my-new-note' for a note titled 'My new note'
@@ -57,29 +64,5 @@ return {
 		ui = {
 			enable = false,
 		},
-		mappings = {
-			-- Overrides the 'gf' mapping to work on markdown/wiki links within your vault.
-			["gf"] = {
-				action = function()
-					return require("obsidian").util.gf_passthrough()
-				end,
-				opts = { noremap = false, expr = true, buffer = true },
-			},
-			-- Toggle check-boxes.
-			["<leader>ch"] = {
-				action = function()
-					return require("obsidian").util.toggle_checkbox()
-				end,
-				opts = { buffer = true },
-			},
-			-- Smart action depending on context, either follow link or toggle checkbox.
-			["<cr>"] = {
-				action = function()
-					return require("obsidian").util.smart_action()
-				end,
-				opts = { buffer = true, expr = true },
-			}
-		},
-		-- see below for full list of options 👇
 	},
 }

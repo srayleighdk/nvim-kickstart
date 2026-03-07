@@ -1,0 +1,32 @@
+{
+  "Riverpod: FutureProvider": {
+    "scope": "dart",
+    "prefix": "futureProvider",
+    "description": "Creates an autodispose FutureProvider",
+    "body": [
+      "final $1Provider = FutureProvider.autoDispose<$2>((ref) async {",
+      "\t$3",
+      "});"
+    ]
+  },
+  "Riverpod: Keep Alive FutureProvider": {
+    "scope": "dart",
+    "prefix": "futureProviderKeepAlive",
+    "description": "Creates a non-autodispose FutureProvider",
+    "body": [
+      "final $1Provider = FutureProvider<$2>((ref) async {",
+      "\t$3",
+      "});"
+    ]
+  },
+  "Riverpod: .family FutureProvider": {
+    "scope": "dart",
+    "prefix": "futureProviderFamily",
+    "description": "Creates an autodispose family FutureProvider",
+    "body": [
+      "final $1Provider = FutureProvider.autoDispose.family<$2, $3>((ref, $4) async {",
+      "\t$5",
+      "});"
+    ]
+  }
+}

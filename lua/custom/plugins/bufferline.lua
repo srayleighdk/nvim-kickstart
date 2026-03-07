@@ -15,16 +15,15 @@ return {
 	config = function()
 		require('bufferline').setup {
 			options = {
-				view = 'default',
+				mode = "buffers",
 				numbers = 'none',
-				buffer_close_icon = '󰅖',
+				buffer_close_icon = '',
 				modified_icon = '●',
 				close_icon = '',
 				left_trunc_marker = '',
 				right_trunc_marker = '',
 				max_name_length = 18,
 				max_prefix_length = 15, -- prefix used when a buffer is deduplicated
-				tab_size = 18,
 				diagnostics = 'nvim_lsp',
 				---@diagnostic disable-next-line: unused-local
 				-- diagnostics_indicator = function(total_count, level, diagnostics_dict)
@@ -40,15 +39,13 @@ return {
 				end,
 				show_buffer_close_icons = true,
 				show_close_icon = false,
-				show_tab_indicators = true,
-				persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
+				-- show_tab_indicators = true,
 				-- can also be a table containing 2 custom separators
 				-- [focused and unfocused]. eg: { '|', '|' }
 				-- separator_style = { "▏", "▕" },
 				-- separator_style = { "│", "│" },
 				separator_style = 'thin',
 				-- separator_style = "thin",        --  "slant" | "thick" | "thin" | { 'any', 'any' },
-				enforce_regular_tabs = false,
 				always_show_bufferline = true,
 				-- sort_by = 'extension' | 'relative_directory' | 'directory' | function(buffer_a, buffer_b)
 				--   -- add custom logic

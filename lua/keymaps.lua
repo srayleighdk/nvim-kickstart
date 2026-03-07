@@ -8,8 +8,9 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
-vim.keymap.set('n', '<S-h>', '<Cmd>BufferLineCycleNext<CR>', { desc = 'Cycle through buffers' })
-vim.keymap.set('n', '<S-l>', '<Cmd>BufferLineCyclePrev<CR>', { desc = 'Cycle through buffers' })
+vim.keymap.set('n', '<S-l>', '<Cmd>BufferLineCycleNext<CR>', { desc = 'Cycle through buffers' })
+vim.keymap.set('n', '<S-h>', '<Cmd>BufferLineCyclePrev<CR>', { desc = 'Cycle through buffers' })
+
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -57,7 +58,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 --keymap for better exit nvim
 vim.keymap.set('n', '<C-q>', ':q<CR>', { desc = 'Quit Neovim' })
 --keymap for exit all nvim
-vim.keymap.set('n', '<S-q>', ':qa<CR>', { desc = 'Quit all Neovim' })
+vim.keymap.set('n', '<S-q>', ':q<CR>', { desc = 'Quit all Neovim' })
 
 vim.keymap.set('n', ']t', function()
   require('todo-comments').jump_next()
@@ -124,5 +125,14 @@ vim.keymap.set("n", "<leader>os", ":ObsidianSearch<CR>", { desc = "Search notes"
 vim.keymap.set("n", "<leader>of", ":ObsidianFollowLink<CR>", { desc = "Follow link" })
 vim.keymap.set("n", "<leader>ot", ":ObsidianTOC<CR>", { desc = "Table of contents" })
 vim.keymap.set("n", "<leader>op", ":ObsidianPasteImg<CR>", { desc = "Paste image" })
+
+-- Move selected lines up/down in Visual mode
+vim.keymap.set("v", "<S-j>", ":m '>+1<CR>gv=gv", { desc = "Move line down (visual)" })
+vim.keymap.set("v", "<S-k>", ":m '<-2<CR>gv=gv", { desc = "Move line up (visual)" })
+
+-- Optional: Also map for Normal mode
+vim.keymap.set("n", "<S-j>", ":m .+1<CR>==", { desc = "Move line down (normal)" })
+vim.keymap.set("n", "<S-k>", ":m .-2<CR>==", { desc = "Move line up (normal)" })
+
 
 -- vim: ts=2 sts=2 sw=2 et
