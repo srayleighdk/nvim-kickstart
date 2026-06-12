@@ -1,0 +1,132 @@
+diff --git a/lua/flutter-tools/dev_tools.lua b/lua/flutter-tools/dev_tools.lua
+index 4849b92..3f7979d 100644
+--- a/lua/flutter-tools/dev_tools.lua
++++ b/lua/flutter-tools/dev_tools.lua
+@@ -242,4 +242,6 @@ function M.set_devtools_url(url) devtools_url = url end
+ 
+ function M.set_profiler_url(url) profiler_url = url end
+ 
++function M.get_vm_service_uri() return profiler_url end
++
+ return M
+diff --git a/lua/flutter-tools/runners/debugger_runner.lua b/lua/flutter-tools/runners/debugger_runner.lua
+index 855447a..1ce847d 100644
+--- a/lua/flutter-tools/runners/debugger_runner.lua
++++ b/lua/flutter-tools/runners/debugger_runner.lua
+@@ -18,6 +18,7 @@ local fmt = string.format
+ local DebuggerRunner = {}
+ 
+ local plugin_identifier = "flutter-tools"
++local last_vm_service_uri = nil
+ 
+ local command_requests = {
+   restart = "hotRestart",
+@@ -163,6 +164,31 @@ local function handle_inspect_event(isolate_id)
+   end)
+ end
+ 
++local function ensure_vm_service_connected(on_connected, on_error)
++  if vm_service.is_connected() then
++    if on_connected then on_connected() end
++    return
++  end
++
++  if not last_vm_service_uri then
++    last_vm_service_uri = dev_tools.get_vm_service_uri()
++  end
++
++  if not last_vm_service_uri then
++    if on_error then on_error("No cached vmServiceUri available") end
++    return
++  end
++
++  vm_service.connect(last_vm_service_uri, function()
++    vm_service.stream_listen("Debug", function(event)
++      if event and event.kind == "Inspect" and event.isolate and event.isolate.id then
++        handle_inspect_event(event.isolate.id)
++      end
++    end)
++    if on_connected then on_connected() end
++  end, on_error)
++end
++
+ local function register_dap_listeners(on_run_data, on_run_exit)
+   local started = false
+   local before_start_logs = {}
+@@ -173,6 +199,7 @@ local function register_dap_listeners(on_run_data, on_run_exit)
+   local handle_termination = function()
+     if next(before_start_logs) ~= nil then on_run_exit(before_start_logs) end
+     if vm_service.is_connected() then vm_service.disconnect() end
++    last_vm_service_uri = nil
+   end
+ 
+   dap.listeners.before["event_exited"][plugin_identifier] = function(_, _) handle_termination() end
+@@ -186,15 +213,10 @@ local function register_dap_listeners(on_run_data, on_run_exit)
+ 
+   dap.listeners.before["event_dart.debuggerUris"][plugin_identifier] = function(_, body)
+     if body and body.vmServiceUri then
++      last_vm_service_uri = body.vmServiceUri
+       dev_tools.register_profiler_url(body.vmServiceUri)
+ 
+-      vm_service.connect(body.vmServiceUri, function()
+-        vm_service.stream_listen("Debug", function(event)
+-          if event and event.kind == "Inspect" and event.isolate and event.isolate.id then
+-            handle_inspect_event(event.isolate.id)
+-          end
+-        end)
+-      end)
++      ensure_vm_service_connected()
+     end
+   end
+ 
+@@ -365,12 +387,25 @@ function DebuggerRunner:send(cmd, quiet, on_response)
+   end
+   local service_activation_params = vm_service_extensions.get_request_params(cmd)
+   if service_activation_params then
+-    dap.session():request("callService", service_activation_params, function(err, response)
+-      if err and not quiet then
+-        ui.notify("Error calling service " .. cmd .. ": " .. err, ui.ERROR)
+-      end
+-      if response and on_response then on_response(response) end
+-    end)
++    local function call_service()
++      dap.session():request("callService", service_activation_params, function(err, response)
++        if err and not quiet then
++          ui.notify("Error calling service " .. cmd .. ": " .. err, ui.ERROR)
++        end
++        if response and on_response then on_response(response) end
++      end)
++    end
++
++    if cmd == "inspect_widget" and not vm_service.is_connected() then
++      ensure_vm_service_connected(call_service, function(err)
++        if not quiet then
++          ui.notify("Failed to reconnect Flutter VM service: " .. tostring(err), ui.ERROR)
++        end
++      end)
++      return
++    end
++
++    call_service()
+     return
+   end
+   if not quiet then
+@@ -378,6 +413,18 @@ function DebuggerRunner:send(cmd, quiet, on_response)
+   end
+ end
+ 
++function DebuggerRunner.reconnect_inspector(quiet)
++  ensure_vm_service_connected(function()
++    if not quiet then
++      ui.notify("Flutter VM service reconnected for widget inspector")
++    end
++  end, function(err)
++    if not quiet then
++      ui.notify("Failed to reconnect Flutter VM service: " .. tostring(err), ui.ERROR)
++    end
++  end)
++end
++
+ function DebuggerRunner:cleanup()
+   if dap.session() then dap.terminate() end
+ end
