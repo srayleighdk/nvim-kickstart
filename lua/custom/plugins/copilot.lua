@@ -1,6 +1,5 @@
 return {
 	"zbirenbaum/copilot.lua",
-	event = "BufReadPost",
 	dependencies = {
 		{
 			"copilotlsp-nvim/copilot-lsp", -- (optional) for NES functionality
@@ -29,14 +28,14 @@ return {
 		},
 	},
 	cmd = "Copilot",
-	-- event = "InsertEnter",
+	event = "InsertEnter",
 	config = function()
 		require("copilot").setup({
-			suggestion = {
+			nes = {
 				enabled = true,
-				keymap = {
-					accept_word = "<S-l>"
-				}
+			},
+			suggestion = {
+				enabled = false,
 			},
 			panel = { enabled = false },
 			filetypes = {

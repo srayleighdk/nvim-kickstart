@@ -278,24 +278,38 @@ return {
 			list = {
 				selection = {
 					preselect = false,
+					auto_insert = false,
 				},
-				auto_insert = true,
+			},
+			menu = {
+				auto_show = function()
+					return vim.b[vim.api.nvim_get_current_buf()].nes_state == nil
+				end,
 			},
 			documentation = {
 				auto_show = true,
-				border = 'single',
-			}
+				window = {
+					border = 'single', -- moved here
+				},
+			},
+
+			-- Ghost text for normal insert mode (this was the main missing piece)
+			ghost_text = {
+				enabled = true,
+				show_with_selection = false,
+				-- Show the ghost text when no item has been selected, defaulting to the first item
+				show_without_selection = true,
+				-- Show the ghost text when the menu is open
+				show_with_menu = false,
+				-- Show the ghost text when the menu is closed
+				show_without_menu = true,
+			},
 		},
 		signature = { enabled = true },
-		-- snippets = {
-		-- 	preset = 'luasnip'
-		-- },
+
 		snippets = {
-			-- Function to use when expanding LSP provided snippets
 			expand = function(snippet) vim.snippet.expand(snippet) end,
-			-- Function to use when checking if a snippet is active
 			active = function(filter) return vim.snippet.active(filter) end,
-			-- Function to use when jumping between tab stops in a snippet, where direction can be negative or positive
 			jump = function(direction) vim.snippet.jump(direction) end,
 		},
 
@@ -305,9 +319,7 @@ return {
 				snippets = {
 					opts = {
 						friendly_snippets = true,
-						extended_filetypes = {
-							dart = { 'flutter' }
-						}
+						extended_filetypes = { dart = { 'flutter' } }
 					}
 				},
 				copilot = {
@@ -316,48 +328,42 @@ return {
 					score_offset = 100,
 					async = true,
 				},
-				calc = {
-					name = 'Calc',
-					module = 'blink-calc',
-				},
+				calc = { name = 'Calc', module = 'blink-calc' },
 				dictionary = {
 					module = 'blink-cmp-dictionary',
 					name = 'Dict',
-					-- Make sure this is at least 2.
-					-- 3 is recommended
 					min_keyword_length = 3,
-					opts = {
-						-- options for blink-cmp-dictionary
-					}
-				}
+					opts = {},
+				},
 			},
 		},
 		keymap = {
-			preset = "enter",
+			preset = "default",
+			['<CR>'] = { 'accept', 'fallback' },
+			['<C-y>'] = { 'select_and_accept', 'fallback' },
 			['<Tab>'] = {
-				'snippet_forward', 'select_next', 'fallback' },
-			['<S-Tab>'] = { 'snippet_backward', 'select_prev', 'fallback' },
+				function(cmp)
+					if cmp.is_menu_visible() then
+						return nil
+					end
 
+					if vim.b[vim.api.nvim_get_current_buf()].nes_state then
+						cmp.hide()
+						return require('copilot-lsp.nes').apply_pending_nes()
+							and require('copilot-lsp.nes').walk_cursor_end_edit()
+					end
+				end,
+				'snippet_forward',
+				'select_next',
+				'fallback'
+			},
+			['<S-Tab>'] = { 'snippet_backward', 'select_prev', 'fallback' },
 		},
+
 		cmdline = {
 			enabled = true,
-			-- use 'inherit' to inherit mappings from top level `keymap` config
 			keymap = { preset = 'cmdline' },
 			sources = { 'buffer', 'cmdline' },
-
-			-- OR explicitly configure per cmd type
-			-- This ends up being equivalent to above since the sources disable themselves automatically
-			-- when not available. You may override their `enabled` functions via
-			-- `sources.providers.cmdline.override.enabled = function() return your_logic end`
-
-			-- sources = function()
-			--   local type = vim.fn.getcmdtype()
-			--   -- Search forward and backward
-			--   if type == '/' or type == '?' then return { 'buffer' } end
-			--   -- Commands
-			--   if type == ':' or type == '@' then return { 'cmdline', 'buffer' } end
-			--   return {}
-			-- end,
 
 			completion = {
 				trigger = {
@@ -366,19 +372,20 @@ return {
 				},
 				list = {
 					selection = {
-						-- When `true`, will automatically select the first item in the completion list
 						preselect = false,
-						-- When `true`, inserts the completion item automatically when selecting it
 						auto_insert = true,
 					},
 				},
-				-- Whether to automatically show the window when new completion items are available
-				-- Default is false for cmdline, true for cmdwin (command-line window)
-				menu = { auto_show = function(ctx, _) return ctx.mode == 'cmdwin' end },
-				-- Displays a preview of the selected item on the current line
-				ghost_text = { enabled = true },
-			}
+				menu = {
+					auto_show = function(ctx, _) return ctx.mode == 'cmdwin' end,
+				},
+				-- Ghost text in cmdline (limited support, but you can keep it)
+				ghost_text = {
+					enabled = true,
+				},
+			},
 		},
+
 		fuzzy = { implementation = "prefer_rust_with_warning" }
 	},
 	opts_extend = { "sources.default" }
